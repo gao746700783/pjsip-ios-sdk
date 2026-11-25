@@ -9,6 +9,8 @@
 #import "PJBridgeTypes.h"
 #import "PJBridgeDelegate.h"
 
+typedef id<PJBridgeDelegate> PJBridgeDelegateRef;
+
 namespace pjsipios {
 
 class PJAccount;
@@ -23,11 +25,11 @@ pjmedia_orient MediaOrientFromBridge(PJBridgeVideoOrientation orient);
 
 class PJLogWriter final : public pj::LogWriter {
 public:
-    explicit PJLogWriter(__weak id<PJBridgeDelegate> delegate);
+    explicit PJLogWriter(__weak PJBridgeDelegateRef delegate);
     void write(const pj::LogEntry &entry) override;
 
 private:
-    __weak id<PJBridgeDelegate> delegate_;
+    __weak PJBridgeDelegateRef delegate_;
 };
 
 class PJCall final : public pj::Call {
@@ -35,7 +37,7 @@ public:
     PJCall(PJAccount &account,
            int callId,
            std::string accountIdURI,
-           __weak id<PJBridgeDelegate> delegate);
+           __weak PJBridgeDelegateRef delegate);
     ~PJCall() override;
 
     void onCallState(pj::OnCallStateParam &prm) override;
@@ -64,7 +66,7 @@ private:
 
     PJAccount &account_;
     std::string accountIdURI_;
-    __weak id<PJBridgeDelegate> delegate_;
+    __weak PJBridgeDelegateRef delegate_;
     bool localMuted_ = false;
     bool localHold_ = false;
     bool videoMuted_ = false;
@@ -77,7 +79,7 @@ private:
 
 class PJAccount final : public pj::Account {
 public:
-    PJAccount(std::string accountIdURI, __weak id<PJBridgeDelegate> delegate);
+    PJAccount(std::string accountIdURI, __weak PJBridgeDelegateRef delegate);
     ~PJAccount() override;
 
     void onRegState(pj::OnRegStateParam &prm) override;
@@ -94,7 +96,7 @@ public:
 
 private:
     std::string accountIdURI_;
-    __weak id<PJBridgeDelegate> delegate_;
+    __weak PJBridgeDelegateRef delegate_;
     mutable std::mutex callsMutex_;
     std::unordered_map<int, std::shared_ptr<PJCall>> calls_;
 };

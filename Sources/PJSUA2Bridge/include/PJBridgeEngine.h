@@ -105,7 +105,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)setVideoCaptureOrientation:(PJBridgeVideoOrientation)orientation
                    captureDeviceId:(int32_t)deviceId
-                             error:(NSError * _Nullable * _Nullable)error;
+                             error:(NSError * _Nullable * _Nullable)error
+NS_SWIFT_NAME(setVideoCaptureOrientation(_:captureDeviceId:));
 
 /// Call query
 - (nullable PJBridgeCallInfo *)callInfoForCall:(int32_t)callId

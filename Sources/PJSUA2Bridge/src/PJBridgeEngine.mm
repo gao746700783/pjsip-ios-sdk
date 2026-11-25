@@ -631,7 +631,7 @@ using namespace pjsipios;
     if (![self ensureStartedWithError:error]) return NO;
     try {
         std::string codecId = StdStringFromNSString(param.codecId);
-        _endpoint->vidCodecSetPriority(codecId, param.priority);
+        _endpoint->videoCodecSetPriority(codecId, param.priority);
 
         pj::VidCodecParam vcp = _endpoint->getVideoCodecParam(codecId);
         if (param.width > 0 && param.height > 0) {

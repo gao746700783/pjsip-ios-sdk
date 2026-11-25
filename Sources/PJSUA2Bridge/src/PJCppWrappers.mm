@@ -65,11 +65,11 @@ pjmedia_orient MediaOrientFromBridge(PJBridgeVideoOrientation orient) {
 
 #pragma mark - PJLogWriter
 
-PJLogWriter::PJLogWriter(__weak id<PJBridgeDelegate> delegate)
+PJLogWriter::PJLogWriter(__weak PJBridgeDelegateRef delegate)
     : delegate_(delegate) {}
 
 void PJLogWriter::write(const pj::LogEntry &entry) {
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (!strongDelegate) {
         return;
     }
@@ -83,7 +83,7 @@ void PJLogWriter::write(const pj::LogEntry &entry) {
 PJCall::PJCall(PJAccount &account,
                int callId,
                std::string accountIdURI,
-               __weak id<PJBridgeDelegate> delegate)
+               __weak PJBridgeDelegateRef delegate)
     : pj::Call(account, callId),
       account_(account),
       accountIdURI_(std::move(accountIdURI)),
@@ -140,7 +140,7 @@ void PJCall::onCallState(pj::OnCallStateParam &prm) {
     PJBridgeCallInfo *info = snapshotCallInfo();
     NSString *accURI = NSStringFromStdString(accountIdURI_);
 
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (strongDelegate) {
         [strongDelegate bridgeAccount:accURI didChangeCallState:info];
     }
@@ -230,7 +230,7 @@ void PJCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {
     }
 
     NSString *accURI = NSStringFromStdString(accountIdURI_);
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (strongDelegate) {
         [strongDelegate bridgeAccount:accURI
                 didChangeMediaForCall:ci.id
@@ -249,7 +249,7 @@ void PJCall::onCallMediaState(pj::OnCallMediaStateParam &prm) {
 }
 
 void PJCall::onCallTransferStatus(pj::OnCallTransferStatusParam &prm) {
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (!strongDelegate) {
         return;
     }
@@ -261,7 +261,7 @@ void PJCall::onCallTransferStatus(pj::OnCallTransferStatusParam &prm) {
 }
 
 void PJCall::onDtmfDigit(pj::OnDtmfDigitParam &prm) {
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (!strongDelegate) {
         return;
     }
@@ -278,7 +278,7 @@ void PJCall::setLocalMute(bool muted) {
     localMuted_ = muted;
     applyAudioMuteState();
 
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (strongDelegate) {
         [strongDelegate bridgeAccount:NSStringFromStdString(accountIdURI_)
                 didChangeMediaForCall:getId()
@@ -320,7 +320,7 @@ void PJCall::setLocalHold(bool hold) {
         localHold_ = false;
     }
 
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (strongDelegate) {
         [strongDelegate bridgeAccount:NSStringFromStdString(accountIdURI_)
                 didChangeMediaForCall:getId()
@@ -337,7 +337,7 @@ void PJCall::setVideoMute(bool muted) {
     vidSetStream(muted ? PJSUA_CALL_VID_STRM_STOP_TRANSMIT : PJSUA_CALL_VID_STRM_START_TRANSMIT, prm);
     videoMuted_ = muted;
 
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (strongDelegate) {
         [strongDelegate bridgeAccount:NSStringFromStdString(accountIdURI_)
                 didChangeMediaForCall:getId()
@@ -371,7 +371,7 @@ void PJCall::switchCamera() {
 }
 
 void PJCall::emitCallStats(const pj::CallInfo &ci) {
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (!strongDelegate) {
         return;
     }
@@ -409,7 +409,7 @@ void PJCall::emitCallStats(const pj::CallInfo &ci) {
 
 #pragma mark - PJAccount
 
-PJAccount::PJAccount(std::string accountIdURI, __weak id<PJBridgeDelegate> delegate)
+PJAccount::PJAccount(std::string accountIdURI, __weak PJBridgeDelegateRef delegate)
     : accountIdURI_(std::move(accountIdURI)), delegate_(delegate) {}
 
 PJAccount::~PJAccount() {
@@ -418,7 +418,7 @@ PJAccount::~PJAccount() {
 }
 
 void PJAccount::onRegState(pj::OnRegStateParam &prm) {
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (!strongDelegate) {
         return;
     }
@@ -448,7 +448,7 @@ void PJAccount::onIncomingCall(pj::OnIncomingCallParam &prm) {
     }
 
     PJBridgeCallInfo *info = call->snapshotCallInfo();
-    id<PJBridgeDelegate> strongDelegate = delegate_;
+    PJBridgeDelegateRef strongDelegate = delegate_;
     if (strongDelegate) {
         [strongDelegate bridgeAccount:NSStringFromStdString(accountIdURI_) didReceiveCallInfo:info];
     }

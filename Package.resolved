@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swift-pjsip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/laconicman/swift-pjsip",
+      "state" : {
+        "revision" : "70cdb53249a6935cc02dc89090f27a36afcac171",
+        "version" : "0.9.0"
+      }
+    }
+  ],
+  "version" : 2
+}
